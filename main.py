@@ -4,6 +4,15 @@ import psycopg2
 from fastapi import FastAPI, Request, HTTPException
 
 app = FastAPI()
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 DATABASE_URL = os.environ["DATABASE_URL"]
 
