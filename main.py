@@ -1,10 +1,12 @@
 import os
+import time
 import psycopg2
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, HTTPException
 
 app = FastAPI()
 
 DATABASE_URL = os.environ["DATABASE_URL"]
+
 
 def get_connection():
     return psycopg2.connect(DATABASE_URL)
@@ -38,13 +40,17 @@ setup_database()
 
 last_requests = {}
 
+
 @app.post("/increment")
 def increment(request: Request):
     ip = request.client.host
     now = time.time()
 
     if ip in last_requests and now - last_requests[ip] < 0.2:
-        raise HTTPException(status_code=429, detail="Too many requests")
+        raise HTTPException(
+            status_code=429,
+            detail="Too many requests"
+        )
 
     last_requests[ip] = now
 
