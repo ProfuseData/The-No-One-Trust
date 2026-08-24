@@ -36,8 +36,18 @@ def setup_database():
 setup_database()
 
 
+last_requests = {}
+
 @app.post("/increment")
-def increment():
+def increment(request: Request):
+    ip = request.client.host
+    now = time.time()
+
+    if ip in last_requests and now - last_requests[ip] < 0.2:
+        raise HTTPException(status_code=429, detail="Too many requests")
+
+    last_requests[ip] = now
+
     conn = get_connection()
     cur = conn.cursor()
 
