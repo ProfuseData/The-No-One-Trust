@@ -39,6 +39,7 @@ setup_database()
 
 
 last_requests = {}
+last_ct_requests = {}
 
 
 @app.post("/increment")
@@ -96,6 +97,17 @@ def decrement():
 
 @app.get("/count")
 def count():
+    ip = request.client.host
+    now = time.time()
+
+    if ip in last_requests and now - last_requests[ip] < 0.1:
+        raise HTTPException(
+            status_code=429,
+            detail="Too many requests"
+        )
+
+    last_ct_requests[ip] = now
+    
     conn = get_connection()
     cur = conn.cursor()
 
