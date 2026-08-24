@@ -83,26 +83,6 @@ def increment(request: Request):
     return {"count": count}
 
 
-@app.post("/decrement")
-def decrement():
-    conn = get_connection()
-    cur = conn.cursor()
-
-    cur.execute("""
-        UPDATE game_data
-        SET button_count = button_count - 1
-        WHERE id = 1
-        RETURNING button_count
-    """)
-
-    count = cur.fetchone()[0]
-
-    conn.commit()
-    cur.close()
-    conn.close()
-
-    return {"count": count}
-
 
 @app.get("/count")
 def count(request: Request):
