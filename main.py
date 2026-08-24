@@ -96,18 +96,18 @@ def decrement():
 
 
 @app.get("/count")
-def count():
+def count(request: Request):
     ip = request.client.host
     now = time.time()
 
-    if ip in last_requests and now - last_requests[ip] < 0.1:
+    if ip in last_ct_requests and now - last_ct_requests[ip] < 0.1:
         raise HTTPException(
             status_code=429,
             detail="Too many requests"
         )
 
     last_ct_requests[ip] = now
-    
+
     conn = get_connection()
     cur = conn.cursor()
 
