@@ -56,7 +56,7 @@ def increment(request: Request):
     ip = request.client.host
     now = time.time()
 
-    if ip in last_requests and now - last_requests[ip] < 0.1:
+    if ip in last_requests and now - last_requests[ip] < 0.05:
         raise HTTPException(
             status_code=429,
             detail="Too many requests"
